@@ -92,7 +92,7 @@ def conv_forward(A_prev, W, b, hparameters):
         a_prev_pad = A_prev_pad[i]                     # Select ith training example padded activation
         for h in range(n_H):                           # loop over vertical axis 
             for w in range(n_W):                       # loop over horizontal axis 
-                for c in range(n_C):                   # loop over channels
+                for c in range(n_C):                   # loop over channels 
                     # Find the corners of the current frame 
                     vert_start = h * stride
                     vert_end = vert_start + f
@@ -115,7 +115,7 @@ def conv_forward(A_prev, W, b, hparameters):
 
 
 np.random.seed(1)
-A_prev = train_images
+A_prev = np.random.randn(10, 4, 4, 3)
 W = np.random.randn(2, 2, 3, 8)
 b = np.random.randn(1, 1, 1, 8)
 hyper_parameters = {"pad" : 2,

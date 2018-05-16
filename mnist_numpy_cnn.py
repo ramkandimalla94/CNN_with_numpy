@@ -100,7 +100,7 @@ def conv_forward(A_prev, W, b, hparameters):
                     horiz_end = horiz_start + f
                     # Use the corners to define the frame of a_prev_pad
                     a_slice_prev = a_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :]
-                    # Convolve the frame with the correct filter W and bias b, to get back one output neuron.
+                    # Convolve the frame with the correct filter W and bias b, to get back one output neuron
                     Z[i, h, w, c] = convolution(a_slice_prev, W[...,c], b[...,c])
                                         
 

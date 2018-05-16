@@ -74,7 +74,7 @@ def conv_forward(A_prev, W, b, hparameters):
     # Retrieve dimensions from W shape 
     (f, f, n_C_prev, n_C) = W.shape
 
-    # Retrieve information from hyper parameters" 
+    # Retrieve information from hyper parameters 
     stride = hyper_parameters['stride']
     pad = hyper_parameters['pad']
     
@@ -89,10 +89,10 @@ def conv_forward(A_prev, W, b, hparameters):
     A_prev_pad = padding(A_prev, pad)
     
     for i in range(m):                                 # loop over the batch of training examples
-        a_prev_pad = A_prev_pad[i]                     # Select ith training example's padded activation
-        for h in range(n_H):                           # loop over vertical axis of the output volume
-            for w in range(n_W):                       # loop over horizontal axis of the output volume
-                for c in range(n_C):                   # loop over channels (= #filters) of the output volume
+        a_prev_pad = A_prev_pad[i]                     # Select ith training example padded activation
+        for h in range(n_H):                           # loop over vertical axis 
+            for w in range(n_W):                       # loop over horizontal axis 
+                for c in range(n_C):                   # loop over channels
                     # Find the corners of the current frame 
                     vert_start = h * stride
                     vert_end = vert_start + f
@@ -115,7 +115,7 @@ def conv_forward(A_prev, W, b, hparameters):
 
 
 np.random.seed(1)
-A_prev = np.random.randn(10, 4, 4, 3)
+A_prev = train_images
 W = np.random.randn(2, 2, 3, 8)
 b = np.random.randn(1, 1, 1, 8)
 hyper_parameters = {"pad" : 2,

@@ -45,8 +45,8 @@ print ('test_labels shape = ', test_labels.shape)
 #padding with Zeros
 
 def padding(x, pad):
+    
     x_pad= np.pad(x,((0,0),(pad,pad),(pad,pad),(0,0)),'constant',constant_values=(0,0))
-     
     return x_pad
  
     
@@ -55,13 +55,9 @@ def padding(x, pad):
 def convolution(a, w, b):
     
     s = np.multiply(a, w) + b
-
     z = np.sum(s) # Add all the values in the frame
-    
     z = z+float(b)
-
     return z
-
 
 
 

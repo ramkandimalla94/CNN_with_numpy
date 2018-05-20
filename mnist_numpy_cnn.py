@@ -64,7 +64,73 @@ def convolution(a, w, b):
     return z
 
 
-def conv_forward(A_prev, W, b, hparameters):
+
+
+#Pooling
+def convolution_with_pooling(A_prev, hparameters, mode = "max"):
+    
+    # Retrieve dimensions from the input shape
+    (m, n_H_prev, n_W_prev, n_C_prev) = A_prev.shape
+    
+    # Retrieve hyperparameters
+    f = hparameters["f"]
+    stride = hparameters["stride"]
+    pad=hparameters["pad"]
+    
+    # Define the dimensions of the output
+    n_H = int((n_H_prev - f + 2 * pad) / stride) + 1
+    n_W = int((n_W_prev - f + 2 * pad) / stride) + 1
+    n_C = n_C_prev
+    
+    # Initialize output matrix A
+    A = np.zeros((m, n_H, n_W, n_C))              
+    
+   
+    for i in range(m):                           # loop over the training examples
+        for h in range(n_H):                     # loop on the vertical axis of the output volume
+            for w in range(n_W):                 # loop on the horizontal axis of the output volume
+                for c in range (n_C):            # loop over the channels of the output volume
+                    
+                    # Find the corners of the current frame
+                    vert_start = h*stride
+                    vert_end = vert_start + f
+                    horiz_start = w*stride
+                    horiz_end = horiz_start + f
+                    
+                    # Use the corners to define the current frame on the ith training example of A_prev, channel c
+                    a_prev_slice = A_prev[i,vert_start:vert_end,horiz_start:horiz_end,c]
+                    
+                    # Compute the pooling operation on the frame
+                    if mode == "max":
+                        A[i, h, w, c] = np.max(a_prev_slice,axis=None)
+                    elif mode == "average":
+                        A[i, h, w, c] = np.mean(a_prev_slice,axis=None)
+    
+    # Making sure your output shape is correct
+    assert(A.shape == (m, n_H, n_W, n_C))
+    
+    # Store the input and hparameters in cache for backward_pooling
+    cache = (A_prev, hparameters)
+    
+    return A, cache
+
+"""
+
+np.random.seed(1)
+A_prev = np.random.randn(2, 4, 4, 3)
+hparameters = {"stride" : 2, "f": 3,"pad":0}
+
+A, cache = convolution_with_pooling(A_prev, hparameters)
+print("mode = max")
+print("A =", A)
+print()
+A, cache = convolution_with_pooling(A_prev, hparameters, mode = "average")
+print("mode = average")
+print("A =", A)
+
+"""
+
+def conv_forward(A_prev, W, b, hyper_parameters):
     
     
   
@@ -102,6 +168,7 @@ def conv_forward(A_prev, W, b, hparameters):
                     a_slice_prev = a_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :]
                     # Convolve the frame with the correct filter W and bias b, to get back one output neuron
                     Z[i, h, w, c] = convolution(a_slice_prev, W[...,c], b[...,c])
+                    #Z[i, h, w, c] = convolution_with_pooling(a_slice_prev, W[...,c], b[...,c])
                                         
 
 
@@ -109,22 +176,30 @@ def conv_forward(A_prev, W, b, hparameters):
     assert(Z.shape == (m, n_H, n_W, n_C))
     
     # Save information in cache for the backpropagation
-    cache = (A_prev, W, b, hparameters)
+    cache = (A_prev, W, b, hyper_parameters)
     
     return Z, cache
 
 
+
+"""
 np.random.seed(1)
-A_prev = np.random.randn(10, 4, 4, 3)
-W = np.random.randn(2, 2, 3, 8)
-b = np.random.randn(1, 1, 1, 8)
+A_prev = np.random.randn(10, 4, 4, 1)
+W = np.random.randn(2, 2, 1, 3)
+b = np.random.randn(1, 1, 1, 3)
 hyper_parameters = {"pad" : 2,
                "stride": 1}
 
 Z, cache_conv = conv_forward(A_prev, W, b, hyper_parameters)
 
-#print Z
-#print cache_conv
+print Z
+print cache_conv
+
+"""
+
+
+
+
 
 
 
